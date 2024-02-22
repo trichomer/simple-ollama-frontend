@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
+import { TextField, Button, Box, Card, CardContent, Typography } from '@mui/material';
 import ollama from 'ollama';
 
 const LlamaInput = () => {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (event) => {
     setPrompt(event.target.value);
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       const result = await ollama.chat({
         model: 'llama2',
@@ -20,6 +22,8 @@ const LlamaInput = () => {
       console.log(result.message.content);
     } catch (error) {
       console.error('Error fetching response from llama2:', error);
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -32,10 +36,23 @@ const LlamaInput = () => {
         onChange={handleInputChange}
         fullWidth
       />
-      <Button onClick={handleSubmit} variant="contained" style={{ marginTop: '10px' }}>
-        Submit
+      <Button
+        onClick={handleSubmit}
+        variant="contained"
+        style={{ marginTop: '10px' }}
+        disabled={isLoading}
+      >
+        {isLoading ? 'Loading...' : 'Submit'}
       </Button>
-      {response && <div><strong>Response:</strong> {response} </div>}
+      {response &&
+        <Card>
+            <CardContent>
+                <Typography>
+                    Response: {response}
+                </Typography>
+            </CardContent>
+        </Card>
+        }
     </Box>
   );
 };
