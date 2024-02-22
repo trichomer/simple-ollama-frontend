@@ -13,13 +13,18 @@ const LlamaInput = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    setResponse('');
     try {
-      const result = await ollama.chat({
+      const streamResponse = await ollama.chat({
         model: 'llama2',
         messages: [{ role: 'user', content: prompt }],
+        stream: true,
       });
-      setResponse(result.message.content);
-      console.log(result.message.content);
+
+      for await (const stream of streamResponse) {
+        setResponse((prevResponse) => prevResponse + stream.message.content);
+      }
+
     } catch (error) {
       console.error('Error fetching response from llama2:', error);
     } finally {
