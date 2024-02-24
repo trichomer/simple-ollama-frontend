@@ -51,6 +51,11 @@ const LlamaInput = () => {
             >
                 <MenuItem value="llama2">Llama2</MenuItem>
                 <MenuItem value="mistral">Mistral</MenuItem>
+                <MenuItem value="dolphin-phi">Dolphin Phi</MenuItem>
+                <MenuItem value="phi">Phi-2</MenuItem>
+                <MenuItem value="codellama">Code Llama</MenuItem>
+                <MenuItem value="llama2-uncensored">Llama 2 Uncensored</MenuItem>
+                <MenuItem value="orca-mini">Orca Mini</MenuItem>
             </Select>
         </FormControl>
         <TextField
