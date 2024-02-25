@@ -7,6 +7,9 @@ const LlamaInput = () => {
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState('llama2');
+  const [sdPrompt, setSDPrompt] = useState('');
+  const [sdResponse, setSDResponse] = useState('');
+  const [isLoadingSD, setIsLoadingSD] = useState(false);
 
   const handleInputChange = (event) => {
     setPrompt(event.target.value);
@@ -36,6 +39,30 @@ const LlamaInput = () => {
         setIsLoading(false);
     }
   };
+
+  const handleStableDiffusionInputChange = (event) => {
+    setSDPrompt(event.target.value);
+    };
+
+    const handleStableDiffusionSubmit = async () => {
+        setIsLoadingSD(true);
+        setSDResponse('');
+        try {
+            const response = await fetch('http://localhost:5000/generate-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: sdPrompt }),
+            });
+            const data = await response.json();
+            setSDResponse(data.path);
+        } catch (error) {
+            console.error('Error fetching response from backend:', error);
+        } finally {
+            setIsLoadingSD(false);
+        }
+    };
 
   return (
     <Box p={2}>
@@ -81,6 +108,33 @@ const LlamaInput = () => {
                     </Typography>
                 </CardContent>
             </Card>
+            }
+
+
+        <TextField
+                label="Enter Stable Diffusion prompt..."
+                variant="outlined"
+                value={sdPrompt}
+                onChange={handleStableDiffusionInputChange}
+                fullWidth
+                style={{ marginTop: '20px', marginBottom: '10px' }}
+            />
+            <Button
+                onClick={handleStableDiffusionSubmit}
+                variant="contained"
+                disabled={isLoadingSD}
+            >
+                {isLoadingSD ? 'Loading...' : 'Generate Image'}
+            </Button>
+            {sdResponse &&
+                <Card>
+                    <CardContent>
+                        <Typography>
+                            Generated Image:
+                            <img src={sdResponse} alt="Generated" />
+                        </Typography>
+                    </CardContent>
+                </Card>
             }
     </Box>
   );
